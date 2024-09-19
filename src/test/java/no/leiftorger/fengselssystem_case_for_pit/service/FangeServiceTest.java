@@ -10,7 +10,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import no.leiftorger.fengselssystem_case_for_pit.model.Fange;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import no.leiftorger.fengselssystem_case_for_pit.FangeFactory;
+import no.leiftorger.fengselssystem_case_for_pit.model.intern.Fange;
+import no.leiftorger.fengselssystem_case_for_pit.model.intern.FangeUtenId;
 
 @SpringBootTest()
 public class FangeServiceTest {
@@ -18,12 +23,19 @@ public class FangeServiceTest {
 	@Autowired
 	FangeService fangeService;
 	
+	@Autowired
+	ObjectMapper fengselOjectMapper;
+	
+	Fange fangeAnton;
+	
 	@BeforeEach
-	public void initierFanger() {
-		fangeService.initierFangedata();
+	public void importerFanger() {
+		fangeService.løslatAlle();
+		FangeFactory.fanger(fengselOjectMapper).fanger.forEach(arrestant -> fangeService.settInn(arrestant));
+		fangeAnton = fangeService.hentUtenId(fangeAntonUtenId);
 	}
 	
-	Fange fangeSomFinnesOgHeterAnton = Fange.builder()
+	FangeUtenId fangeAntonUtenId = FangeUtenId.builder()
 			.navn("Anton Chigurh")
 			.alder(50)
 			.kjonn("Mann")
@@ -32,7 +44,8 @@ public class FangeServiceTest {
 			.fengslingsDatoTil(LocalDate.of(2037, 11, 07))
 			.build();
 	
-	Fange fangeSomIkkeFinnesIInitieltRegisterOgHeterLucy = Fange.builder()
+	
+	FangeUtenId fangeSomIkkeFinnesIInitieltRegisterOgHeterLucy = FangeUtenId.builder()
 			.navn("Lucy Smith")
 			.alder(80)
 			.kjonn("Kvinne")
@@ -42,19 +55,16 @@ public class FangeServiceTest {
 			.build();
 		
 	@Test
-	/*
-	 * sjekker også implisitt at fanger ble initiert av fra ekstern tjenest
-	 */
-	void skalKunneLeseJsonTilInternDatastruktur() {
+	void rettAntallFanger() {
 		List<Fange> fanger = fangeService.hentFanger();
 		assertThat(fanger).size()
-		.as("Forventet 14 fanger i initielle data")
-		.isEqualTo(14);
+		.as("Forventet 5 fanger i initielle data")
+		.isEqualTo(5);
 	}
 	
 	@Test
 	void fangeSkalKunneOverføres() {
-		Fange overførFange = fangeSomFinnesOgHeterAnton;
+		Fange overførFange = fangeAnton;
 		
 		Integer overførFangeFraCelle = 302;
 		Integer overførFangeTilCelle = 102;
@@ -93,8 +103,10 @@ public class FangeServiceTest {
 		.as("Forventet tre fanger i celle etter å ha satt inn ny arrestant")
 		.isEqualTo(3);
 		
+		Fange nyArrestantLucy = fangeService.hentUtenId(fangeSomIkkeFinnesIInitieltRegisterOgHeterLucy);
+		
 		Long forventerEnFunnetFange = fangeService.hentFangerForCelleNummer(settInnICelleNummer)
-		.stream().filter(fange -> Objects.equals(fange, fangeSomIkkeFinnesIInitieltRegisterOgHeterLucy))
+		.stream().filter(fange -> Objects.equals(fange, nyArrestantLucy))
 		.count();
 		assertThat(1L)
 		.as("Forventet at innsatt fange var på angitt celle med nummer " + settInnICelleNummer)
@@ -104,13 +116,13 @@ public class FangeServiceTest {
 	@Test
 	void fangeSkalKunneLøslates() {
 		
-		Integer løslatFraCellenummer = fangeSomFinnesOgHeterAnton.getCelleNummer();
+		Integer løslatFraCellenummer = fangeAnton.getCelleNummer();
 		
 		assertThat(fangeService.antallFangerICelle(løslatFraCellenummer))
 		.as("Forventet 2 fanger basert på initielle fangedata")
 		.isEqualTo(2);
 		
-		fangeService.løslat(fangeSomFinnesOgHeterAnton);
+		fangeService.løslat(fangeAnton);
 		
 		assertThat(fangeService.antallFangerICelle(løslatFraCellenummer))
 		.as("Forventet at kun en fange var igjen i celle etter å ha løslatt en arrestant")

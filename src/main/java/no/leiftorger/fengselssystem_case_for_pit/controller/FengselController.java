@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import no.leiftorger.fengselssystem_case_for_pit.model.Fange;
+import no.leiftorger.fengselssystem_case_for_pit.model.intern.Fange;
+import no.leiftorger.fengselssystem_case_for_pit.model.intern.FangeUtenId;
 import no.leiftorger.fengselssystem_case_for_pit.service.FangeService;
 
 
@@ -30,6 +31,14 @@ public class FengselController {
 				);		
 	}
 	
+	@GetMapping("/api/populer")
+	public ResponseEntity<List<Fange>> populerFraEksternTjeneste() {
+		fangeService.importerFanger();
+		return new ResponseEntity<>(
+				HttpStatus.OK
+				);		
+	}
+	
 	@GetMapping("/api/antallFanger")
 	public ResponseEntity<Long> antallFanger(@RequestParam Integer celleNummer) {
 		return new ResponseEntity<>(
@@ -39,13 +48,13 @@ public class FengselController {
 	}
 	
 	@PostMapping("/api/overfor")
-	public HttpStatus overfør(@RequestBody Fange fange, @RequestParam Integer celleNummer) {
+	public HttpStatus overfor(@RequestBody Fange fange, @RequestParam Integer celleNummer) {
 		fangeService.overfør(fange, celleNummer);
 		return HttpStatus.OK;
 	}
 	
 	@PostMapping("/api/settInn")
-	public HttpStatus settInn(@RequestBody Fange fange) {
+	public HttpStatus settInn(@RequestBody FangeUtenId fange) {
 		fangeService.settInn(fange);
 		return HttpStatus.OK;
 	}

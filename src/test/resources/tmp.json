@@ -1,0 +1,28 @@
+{
+				"Fanger": [
+			    	{
+				      	"navn": "Anton Chigurh",
+				      	"alder": 50,
+				      	"kjonn": "Mann",
+				      	"celleNummer": 302,
+				      	"fengslingsDatoFra": "12-02-2007",
+				      	"fengslingsDatoTil": "07-11-2037"
+				    },
+			    	{
+					  	"navn": "Henry Hill",
+						"alder": 55,
+						"kjonn": "Mann",
+						"celleNummer": 302,
+						"fengslingsDatoFra": "28-11-2001",
+						"fengslingsDatoTil": "19-08-2031"
+			    	},
+			    	{
+						"navn": "Navn Navnesen";
+						"alder": "42";
+						"kjonn": "Mann";
+						celleNummer: "101";
+						fengslingsDatoFra: "24-04-2002";
+						fengslingsDatoTil: "04-02-2042";
+					}
+			  	]
+			}

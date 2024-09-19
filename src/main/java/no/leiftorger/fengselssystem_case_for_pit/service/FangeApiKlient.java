@@ -5,10 +5,12 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.util.Base64;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
@@ -33,14 +35,20 @@ public class FangeApiKlient {
 	
 
 	public String hentFangerSomJson() {
-		String response = null; 
+		HttpResponse<String> httpResponse = null; 
 		try { 
-			 response = HttpClient.newHttpClient().send(lagHttpRequest(), BodyHandlers.ofString()).body();
+			httpResponse = HttpClient.newHttpClient().send(lagHttpRequest(), BodyHandlers.ofString());
 		} catch (IOException | InterruptedException e) {
-			log.error("feil fed forsøk på å sende http forespørsel til {}", e);
+			log.error("feil fed forsøk på å sende http forespørsel til {}", uriString, e);
 			return null;
 		}
-		return response;
+		if (httpResponse.statusCode() != HttpStatus.OK.value()) {
+			throw new RuntimeException(
+					String.format("feil fed forsøk på å sende http forespørsel til %s. HttpStatus %s", uriString, httpResponse.statusCode())
+					);
+			
+		}
+		return httpResponse.body();
 	}
 	
 	private HttpRequest lagHttpRequest() {
@@ -57,7 +65,7 @@ public class FangeApiKlient {
 		  .build();
 	}
 	
-	private String basicAuthHeader(String brukernavn, String passord) {
+	public static String basicAuthHeader(String brukernavn, String passord) {
 		String brukernavnOgPassord = brukernavn + ":" + passord;
 		return "Basic " + Base64.getEncoder().encodeToString(brukernavnOgPassord.getBytes());
 	}

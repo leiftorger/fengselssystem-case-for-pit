@@ -18,11 +18,12 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import no.leiftorger.fengselssystem_case_for_pit.model.Fange;
+import no.leiftorger.fengselssystem_case_for_pit.model.intern.Fange;
+import no.leiftorger.fengselssystem_case_for_pit.model.intern.Fanger;
 import no.leiftorger.fengselssystem_case_for_pit.service.FangeService;
 
 @WebMvcTest(FengselController.class)
-class WebMockTest {
+class FengselControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -30,17 +31,18 @@ class WebMockTest {
 	@MockBean
 	private FangeService fangeService;
 	
-	@Autowired
-	private ObjectMapper fengselOjectMapper;
-	
+	/* 
+	 * Merk: her brukes ISO-8601 for datoer, siden det er Springs controller som deserialiserer 
+	 * JSON som mottas av controlleren.
+	 */
 	private String contentFangeHenry = """
 			{
 		      "navn": "Henry Hill",
 		      "alder": 55,
 		      "kjonn": "Mann",
 		      "celleNummer": 302,
-		      "fengslingsDatoFra": "28-11-2001",
-		      "fengslingsDatoTil": "19-08-2031"
+		      "fengslingsDatoFra": "2001-11-28",
+		      "fengslingsDatoTil": "2031-08-19"
 		    }
 			""";
 
@@ -59,8 +61,13 @@ class WebMockTest {
 	
 	@Test
 	void testOverfor() throws Exception {
-		//when(fangeService.overfør(fengselOjectMapper.readValue(contentFangeHenry, Fange.class), 1)). thenReturn(Collections.emptyList());
-		// Her kaster jeg inn håndkledet
-		this.mockMvc.perform(post("/api/overfor").contentType("application/json").content(contentFangeHenry).param("celleNummer", "1")).andDo(print()).andExpect(status().isOk());
+		
+		this.mockMvc.perform(
+				post("/api/overfor")
+				.contentType("application/json")
+				.content(contentFangeHenry)
+				.param("celleNummer", "1"))
+		.andDo(print())
+		.andExpect(status().isOk());
 	}
 }

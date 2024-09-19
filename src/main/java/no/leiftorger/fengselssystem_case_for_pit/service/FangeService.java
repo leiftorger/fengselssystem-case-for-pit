@@ -5,12 +5,17 @@ import java.util.List;
 import java.util.Objects;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
-import no.leiftorger.fengselssystem_case_for_pit.model.Fange;
-import no.leiftorger.fengselssystem_case_for_pit.model.Fanger;
+import no.leiftorger.fengselssystem_case_for_pit.dao.ArrestantDao;
+import no.leiftorger.fengselssystem_case_for_pit.model.ModelMapper;
+import no.leiftorger.fengselssystem_case_for_pit.model.ekstern.FangerEkstern;
+import no.leiftorger.fengselssystem_case_for_pit.model.intern.Fange;
+import no.leiftorger.fengselssystem_case_for_pit.model.intern.FangeUtenId;
 
 /**
  * Ansvar for å tilby forretningsfunksjoner mot for fengselssystemet
@@ -23,29 +28,28 @@ public class FangeService {
 
 	private final FangeApiKlient apiKlient;
 	private final ObjectMapper fengselOjectMapper;
-	private Fanger fanger;
+	private ArrestantDao arrestantDao;
 	
-	public FangeService(FangeApiKlient client, ObjectMapper fengselOjectMapper) {
+	public FangeService(FangeApiKlient client, ObjectMapper fengselOjectMapper, ArrestantDao arrestantDao) {
 		this.apiKlient = client;
 		this.fengselOjectMapper = fengselOjectMapper;
-		initierFangedata();
+		this.arrestantDao = arrestantDao;
 	}
 	
-	void initierFangedata() {
-		this.fanger = hentInitielleFangerFraEksternTjeneste();
-		log.info("Hentet og populerte {} fanger fra api", fanger.getFanger().size());
-	}
-	
-	private Fanger hentInitielleFangerFraEksternTjeneste(String fangerJson) {
+	private FangerEkstern fangerFraJson(String fangerJson) {
 		try {
-			return fengselOjectMapper.readValue(fangerJson, Fanger.class);
+			return fengselOjectMapper.readValue(fangerJson, FangerEkstern.class);
 		} catch (JsonProcessingException e) {
-			throw new RuntimeException("kunne ikke parse json til liste av type Person", e);
+			throw new RuntimeException("kunne ikke parse json til Fange", e);
 		}
 	}
 	
-	private Fanger hentInitielleFangerFraEksternTjeneste() {
-		return hentInitielleFangerFraEksternTjeneste(apiKlient.hentFangerSomJson());
+	public void importerFanger() {
+		arrestantDao.opprett(
+				ModelMapper.map(
+						fangerFraJson(apiKlient.hentFangerSomJson())
+						)
+				);
 	}
 	
 	private boolean skulleVærtLøslatt(Fange fange) {
@@ -54,28 +58,37 @@ public class FangeService {
 	}
 	
 	public List<Fange> hentFanger() {
-		return this.fanger.getFanger();
+		return arrestantDao.hentAlle();
+	}
+	
+	public Fange hentUtenId(FangeUtenId fange) {
+		return arrestantDao.hentUtenId(fange);
 	}
 	
 	public List<Fange> hentFangerForCelleNummer(Integer celleNummer) {
-		return this.fanger.getFanger().stream()
+		return arrestantDao.hentAlle().stream()
 				.filter(fange -> Objects.equals(fange.getCelleNummer(), celleNummer))
 				.toList();
 	}
 
-	public void settInn(Fange fange) {
-		fanger.leggTil(fange);
+	public void settInn(FangeUtenId fange) {
+		arrestantDao.opprett(fange);
 	}
 	
 	public boolean løslat(Fange fange) {
 		if (skulleVærtLøslatt(fange)) {
 			log.warn("Løslater fange som skulle vært løslatt fra før: {}", fange);
 		}
-		return fanger.fjern(fange);
+		return arrestantDao.løslat(fange);
 	}
 	
+	public int løslatAlle() {
+		return arrestantDao.løslatAlle();
+	}
+	
+	@Transactional
 	public void overfør(Fange fange, Integer celleNummer) {
-		fanger.overfør(fange, celleNummer);
+		arrestantDao.oppdater(fange.toBuilder().celleNummer(celleNummer).build());
 	}
 	
 	/*
@@ -84,9 +97,7 @@ public class FangeService {
 	 * da det antas at dette indikerer at de faktisk er løslatt
 	 */
 	public Long antallFangerICelle(Integer celleNummer) {
-		return fanger.getFanger().stream()
-				.filter(fange -> Objects.equals(fange.getCelleNummer(), celleNummer))
-				.count();
+		return arrestantDao.antallFanger(celleNummer);
 	}
 	
 	
