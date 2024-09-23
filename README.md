@@ -2,7 +2,9 @@
 Prosjektet besvarer oppgave beskrevet i [tilsendt case](CASE.md).
 
 # Oppstart og grensesnitt
-Tjenesten startes som en webserver og tilbyr dokumentasjon av REST-grensesnitt via [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html) 
+* Tjenesten startes som en webserver
+* Dokumentasjon av REST-grensesnitt er tilgjengelig via [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html) 
+* Frontend/GUI er basert på [Thymeleaf](https://www.thymeleaf.org/) og [Material components](https://github.com/material-components/material-components-web)
 
 ## Antagelser
 * Det er valgt norsk som kodespråk da det antas at det er ønsket språk

@@ -12,9 +12,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableTransactionManagement
-@Profile("!test")
 /*
- * denne ville normalt kun vært tilgjengelig under src/test, men vi bruker H2 for å kjøre appen som demo.
  */
 public class DatabaseConfig {
 	@Bean
@@ -25,7 +23,6 @@ public class DatabaseConfig {
 				.setScriptEncoding("UTF-8")
 				.ignoreFailedDrops(true)
 				.addScript("database/create.sql")
-				.addScript("database/insert.sql")
 				.build();
 	}
 }

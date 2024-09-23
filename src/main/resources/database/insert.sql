@@ -1,0 +1,3 @@
+INSERT INTO arrestanter (navn, alder, kjonn, fengslingsDatoFra, fengslingsDatoTil, celleNummer) VALUES ('Per Hansen', 40, 'Mann', '2024-01-01', '2025-01-20', 1);
+INSERT INTO arrestanter (navn, alder, kjonn, fengslingsDatoFra, fengslingsDatoTil, celleNummer) VALUES ('Lise Hansen', 41, 'Kvinne', '2024-05-01', '2026-02-23', 1);
+INSERT INTO arrestanter (navn, alder, kjonn, fengslingsDatoFra, fengslingsDatoTil, celleNummer) VALUES ('Knut Knutsen', 35, 'Mann', '2023-02-04', '2028-02-07', 2);
