@@ -4,22 +4,22 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import no.leiftorger.fengselssystem_case_for_pit.model.ModelMapper;
-import no.leiftorger.fengselssystem_case_for_pit.model.ekstern.FangerEkstern;
-import no.leiftorger.fengselssystem_case_for_pit.model.intern.FangerUtenId;
+import no.leiftorger.fengselssystem_case_for_pit.model.ekstern.ArrestanterEkstern;
+import no.leiftorger.fengselssystem_case_for_pit.model.intern.ArrestanterUtenId;
 
-public class FangeFactory {
+public class ArrestantFactory {
 	
-	public static FangerUtenId fanger(ObjectMapper fengselOjectMapper) {
-		FangerUtenId fanger = null;
+	public static ArrestanterUtenId fanger(ObjectMapper fengselOjectMapper) {
+		ArrestanterUtenId fanger = null;
 		try {
-			fanger = ModelMapper.map(fengselOjectMapper.readValue(fangerJson, FangerEkstern.class));
+			fanger = ModelMapper.map(fengselOjectMapper.readValue(arrestanterJson, ArrestanterEkstern.class));
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException("kunne ikke parse json til Fange", e);
 		}
 		return fanger;
 	}
 	
-	public static final String fangerJson = """
+	public static final String arrestanterJson = """
 			{
 				"Fanger": [
 			    	{

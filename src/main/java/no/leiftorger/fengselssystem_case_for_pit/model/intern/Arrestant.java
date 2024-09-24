@@ -9,7 +9,7 @@ import lombok.extern.jackson.Jacksonized;
 @Data
 @Builder(toBuilder = true)
 @Jacksonized
-public class Fange {
+public class Arrestant {
 	Integer id;
 	String navn;
 	Integer alder;

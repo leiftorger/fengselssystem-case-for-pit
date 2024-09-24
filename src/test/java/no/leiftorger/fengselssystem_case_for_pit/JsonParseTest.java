@@ -8,9 +8,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import no.leiftorger.fengselssystem_case_for_pit.model.ekstern.FangerEkstern;
-import no.leiftorger.fengselssystem_case_for_pit.model.intern.Fanger;
-import no.leiftorger.fengselssystem_case_for_pit.model.intern.FangerUtenId;
+import no.leiftorger.fengselssystem_case_for_pit.model.ekstern.ArrestanterEkstern;
+import no.leiftorger.fengselssystem_case_for_pit.model.intern.Arrestanter;
+import no.leiftorger.fengselssystem_case_for_pit.model.intern.ArrestanterUtenId;
 
 @SpringBootTest()
 public class JsonParseTest {
@@ -21,9 +21,9 @@ public class JsonParseTest {
 	@Test
 	void testMapper() {
 		try {
-			fengselOjectMapper.readValue(FangeFactory.fangerJson, FangerEkstern.class);
+			fengselOjectMapper.readValue(ArrestantFactory.arrestanterJson, ArrestanterEkstern.class);
 		} catch (Exception e) {
-			fail("Kunne ikke parse json for fanger: " + FangeFactory.fangerJson, e);
+			fail("Kunne ikke parse json for fanger: " + ArrestantFactory.arrestanterJson, e);
 		}
 	}
 }

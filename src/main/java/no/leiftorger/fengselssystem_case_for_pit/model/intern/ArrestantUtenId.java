@@ -1,4 +1,4 @@
-package no.leiftorger.fengselssystem_case_for_pit.model.ekstern;
+package no.leiftorger.fengselssystem_case_for_pit.model.intern;
 
 import java.time.LocalDate;
 
@@ -9,7 +9,7 @@ import lombok.extern.jackson.Jacksonized;
 @Data
 @Builder(toBuilder = true)
 @Jacksonized
-public class FangeEkstern {
+public class ArrestantUtenId {
 	String navn;
 	Integer alder;
 	String kjonn;

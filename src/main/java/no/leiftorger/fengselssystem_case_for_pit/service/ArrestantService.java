@@ -13,9 +13,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.leiftorger.fengselssystem_case_for_pit.dao.ArrestantDao;
 import no.leiftorger.fengselssystem_case_for_pit.model.ModelMapper;
-import no.leiftorger.fengselssystem_case_for_pit.model.ekstern.FangerEkstern;
-import no.leiftorger.fengselssystem_case_for_pit.model.intern.Fange;
-import no.leiftorger.fengselssystem_case_for_pit.model.intern.FangeUtenId;
+import no.leiftorger.fengselssystem_case_for_pit.model.ekstern.ArrestanterEkstern;
+import no.leiftorger.fengselssystem_case_for_pit.model.intern.Arrestant;
+import no.leiftorger.fengselssystem_case_for_pit.model.intern.ArrestantUtenId;
 
 /**
  * Ansvar for å tilby forretningsfunksjoner mot for fengselssystemet
@@ -24,27 +24,27 @@ import no.leiftorger.fengselssystem_case_for_pit.model.intern.FangeUtenId;
  */
 @Service
 @Slf4j
-public class FangeService {
+public class ArrestantService {
 
-	private final FangeApiKlient apiKlient;
+	private final ArrestantApiKlient apiKlient;
 	private final ObjectMapper fengselOjectMapper;
 	private ArrestantDao arrestantDao;
 	
-	public FangeService(FangeApiKlient client, ObjectMapper fengselOjectMapper, ArrestantDao arrestantDao) {
+	public ArrestantService(ArrestantApiKlient client, ObjectMapper fengselOjectMapper, ArrestantDao arrestantDao) {
 		this.apiKlient = client;
 		this.fengselOjectMapper = fengselOjectMapper;
 		this.arrestantDao = arrestantDao;
 	}
 	
-	private FangerEkstern fangerFraJson(String fangerJson) {
+	private ArrestanterEkstern fangerFraJson(String fangerJson) {
 		try {
-			return fengselOjectMapper.readValue(fangerJson, FangerEkstern.class);
+			return fengselOjectMapper.readValue(fangerJson, ArrestanterEkstern.class);
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException("kunne ikke parse json til Fange", e);
 		}
 	}
 	
-	public void importerFanger() {
+	public void importerArrestanter() {
 		arrestantDao.opprett(
 				ModelMapper.map(
 						fangerFraJson(apiKlient.hentFangerSomJson())
@@ -52,34 +52,34 @@ public class FangeService {
 				);
 	}
 	
-	private boolean skulleVærtLøslatt(Fange fange) {
+	private boolean skulleVærtLøslatt(Arrestant fange) {
 		LocalDate nå = LocalDate.now();
-		return nå.isBefore(fange.getFengslingsDatoTil());
+		return nå.isAfter(fange.getFengslingsDatoTil());
 	}
 	
-	public List<Fange> hentFanger() {
+	public List<Arrestant> hentArrestanter() {
 		return arrestantDao.hentAlle();
 	}
 	
-	public Fange hentUtenId(FangeUtenId fange) {
+	public Arrestant hentUtenId(ArrestantUtenId fange) {
 		return arrestantDao.hentUtenId(fange);
 	}
 	
-	public List<Fange> hentFangerForCelleNummer(Integer celleNummer) {
+	public List<Arrestant> hentFangerForCelleNummer(Integer celleNummer) {
 		return arrestantDao.hentAlle().stream()
 				.filter(fange -> Objects.equals(fange.getCelleNummer(), celleNummer))
 				.toList();
 	}
 
-	public void settInn(FangeUtenId fange) {
-		arrestantDao.opprett(fange);
+	public void settInn(ArrestantUtenId arrestant) {
+		arrestantDao.opprett(arrestant);
 	}
 	
-	public boolean løslat(Fange fange) {
-		if (skulleVærtLøslatt(fange)) {
-			log.warn("Løslater fange som skulle vært løslatt fra før: {}", fange);
+	public boolean løslat(Arrestant arrestant) {
+		if (skulleVærtLøslatt(arrestant)) {
+			log.warn("Løslater fange som skulle vært løslatt fra før: {}", arrestant);
 		}
-		return arrestantDao.løslat(fange);
+		return arrestantDao.løslat(arrestant);
 	}
 	
 	public int løslatAlle() {
@@ -87,8 +87,12 @@ public class FangeService {
 	}
 	
 	@Transactional
-	public void overfør(Fange fange, Integer celleNummer) {
-		arrestantDao.oppdater(fange.toBuilder().celleNummer(celleNummer).build());
+	public void overfør(Arrestant arrestant, Integer celleNummer) {
+		arrestantDao.oppdater(arrestant.toBuilder().celleNummer(celleNummer).build());
+	}
+	
+	public Arrestant hent(Integer id) {
+		return arrestantDao.hent(id);
 	}
 	
 	/*
@@ -96,8 +100,8 @@ public class FangeService {
 	 * Ekskluderer registreringer av fanger hvor løslatt-dato er passert,
 	 * da det antas at dette indikerer at de faktisk er løslatt
 	 */
-	public Long antallFangerICelle(Integer celleNummer) {
-		return arrestantDao.antallFanger(celleNummer);
+	public Long antallArrestanterICelle(Integer celleNummer) {
+		return arrestantDao.antallArrestanter(celleNummer);
 	}
 	
 	

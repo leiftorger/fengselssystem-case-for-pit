@@ -18,9 +18,9 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import no.leiftorger.fengselssystem_case_for_pit.model.intern.Fange;
-import no.leiftorger.fengselssystem_case_for_pit.model.intern.Fanger;
-import no.leiftorger.fengselssystem_case_for_pit.service.FangeService;
+import no.leiftorger.fengselssystem_case_for_pit.model.intern.Arrestant;
+import no.leiftorger.fengselssystem_case_for_pit.model.intern.Arrestanter;
+import no.leiftorger.fengselssystem_case_for_pit.service.ArrestantService;
 
 @WebMvcTest(FengselController.class)
 class FengselControllerTest {
@@ -29,7 +29,7 @@ class FengselControllerTest {
 	private MockMvc mockMvc;
 
 	@MockBean
-	private FangeService fangeService;
+	private ArrestantService fangeService;
 	
 	/* 
 	 * Merk: her brukes ISO-8601 for datoer, siden det er Springs controller som deserialiserer 
@@ -48,14 +48,14 @@ class FengselControllerTest {
 
 	@Test
 	void testAntallFanger() throws Exception {
-		when(fangeService.antallFangerICelle(1)).thenReturn(1L);
+		when(fangeService.antallArrestanterICelle(1)).thenReturn(1L);
 		this.mockMvc.perform(get("/api/antallFanger").param("celleNummer", "1")).andDo(print()).andExpect(status().isOk())
 				.andExpect(content().string(containsString("1")));
 	}
 	
 	@Test
 	void testInnsatte() throws Exception {
-		when(fangeService.hentFanger()).thenReturn(Collections.emptyList());
+		when(fangeService.hentArrestanter()).thenReturn(Collections.emptyList());
 		this.mockMvc.perform(get("/api/innsatte")).andDo(print()).andExpect(status().isOk());
 	}
 	

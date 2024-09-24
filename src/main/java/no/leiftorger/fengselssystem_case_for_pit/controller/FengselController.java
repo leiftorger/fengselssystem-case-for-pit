@@ -11,57 +11,57 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import no.leiftorger.fengselssystem_case_for_pit.model.intern.Fange;
-import no.leiftorger.fengselssystem_case_for_pit.model.intern.FangeUtenId;
-import no.leiftorger.fengselssystem_case_for_pit.service.FangeService;
+import no.leiftorger.fengselssystem_case_for_pit.model.intern.Arrestant;
+import no.leiftorger.fengselssystem_case_for_pit.model.intern.ArrestantUtenId;
+import no.leiftorger.fengselssystem_case_for_pit.service.ArrestantService;
 
 
 @RestController()
 public class FengselController {
 	
 	@Autowired
-	private FangeService fangeService;
+	private ArrestantService arrestantService;
 	
 	
 	@GetMapping("/api/innsatte")
-	public ResponseEntity<List<Fange>> innsatte() {
+	public ResponseEntity<List<Arrestant>> innsatte() {
 		return new ResponseEntity<>(
-				fangeService.hentFanger(),
+				arrestantService.hentArrestanter(),
 				HttpStatus.OK
 				);		
 	}
 	
 	@GetMapping("/api/populer")
-	public ResponseEntity<List<Fange>> populerFraEksternTjeneste() {
-		fangeService.importerFanger();
+	public ResponseEntity<List<Arrestant>> populerFraEksternTjeneste() {
+		arrestantService.importerArrestanter();
 		return new ResponseEntity<>(
 				HttpStatus.OK
 				);		
 	}
 	
 	@GetMapping("/api/antallFanger")
-	public ResponseEntity<Long> antallFanger(@RequestParam Integer celleNummer) {
+	public ResponseEntity<Long> antallArrestanter(@RequestParam Integer celleNummer) {
 		return new ResponseEntity<>(
-				fangeService.antallFangerICelle(celleNummer),
+				arrestantService.antallArrestanterICelle(celleNummer),
 				HttpStatus.OK
 				);		
 	}
 	
 	@PostMapping("/api/overfor")
-	public HttpStatus overfor(@RequestBody Fange fange, @RequestParam Integer celleNummer) {
-		fangeService.overfør(fange, celleNummer);
+	public HttpStatus overfor(@RequestBody Arrestant fange, @RequestParam Integer celleNummer) {
+		arrestantService.overfør(fange, celleNummer);
 		return HttpStatus.OK;
 	}
 	
 	@PostMapping("/api/settInn")
-	public HttpStatus settInn(@RequestBody FangeUtenId fange) {
-		fangeService.settInn(fange);
+	public HttpStatus settInn(@RequestBody ArrestantUtenId fange) {
+		arrestantService.settInn(fange);
 		return HttpStatus.OK;
 	}
 	
 	@PostMapping("/api/loslat")
-	public HttpStatus løslat(@RequestBody Fange fange) {
-		fangeService.løslat(fange);
+	public HttpStatus løslat(@RequestBody Arrestant arrestant) {
+		arrestantService.løslat(arrestant);
 		return HttpStatus.OK;
 	}
 	

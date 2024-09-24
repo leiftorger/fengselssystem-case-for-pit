@@ -12,13 +12,13 @@ import com.github.tomakehurst.wiremock.common.ConsoleNotifier;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 
-import no.leiftorger.fengselssystem_case_for_pit.FangeFactory;
+import no.leiftorger.fengselssystem_case_for_pit.ArrestantFactory;
 
 @SpringBootTest()
 @TestPropertySource(properties = {"spring.config.location=classpath:application-test.properties"})
 public class KlientTest {
 	@Autowired
-	FangeApiKlient klient;
+	ArrestantApiKlient klient;
 	
 	@RegisterExtension
 	WireMockExtension wme = WireMockExtension.newInstance()
@@ -32,14 +32,14 @@ public class KlientTest {
 		wme.stubFor(WireMock.get(WireMock.urlPathEqualTo("/fanger")).withHost(WireMock.equalTo("localhost"))
 	            .willReturn(WireMock.aResponse()
 	                .withStatus(200)
-	                .withHeader("Authorization", FangeApiKlient.basicAuthHeader("test-brukernavn", "test-passordet"))
+	                .withHeader("Authorization", ArrestantApiKlient.basicAuthHeader("test-brukernavn", "test-passordet"))
 	                .withHeader("Content-Type", "application/json")
-	                .withBody(FangeFactory.fangerJson)
+	                .withBody(ArrestantFactory.arrestanterJson)
 	                )
 	            );
 		
 		String respons = klient.hentFangerSomJson();
 		assertThat(respons).isNotEmpty();
-		assertThat(respons).isEqualTo(FangeFactory.fangerJson);
+		assertThat(respons).isEqualTo(ArrestantFactory.arrestanterJson);
 	}
 }
