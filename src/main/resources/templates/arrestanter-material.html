@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<title>Fengselssystem - case</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/material-components-web/14.0.0/material-components-web.min.js" integrity="sha512-52x9jxRlpg4HFObOpmnst5aeTZxf3nqEAk0E0MRwP5mOQwWgIr9BydMAQyeIWhHiMZN/nvEpoStVS97oLrCg7A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script type="javasript" th:src="@{/material-components-web.min.js}" ></script>
+	<link th:href="@{/googleapis-material-icons.css}" rel="stylesheet" />
+	<link rel="stylesheet" href="material-components-web.min.css" />
+	<link rel="stylesheet" href="fengselssystem-case.css" />
+</head>
+
+<body class="mdc-typography">
+	<h1 class="mdc-typography--headline5">Fengselssystem for PIT - Case</h1>
+
+	<p>
+		<a th:href="@{/importer}">
+			<button class="mdc-button mdc-button--outlined">
+				<span class="mdc-button__ripple"></span>
+				<span class="mdc-button__label">Importer dummy-data fra ekstern tjeneste</span>
+			</button>
+		</a>
+	</p>
+
+
+	<h2 class="mdc-typography--headline6">Alle arrestanter</h2>
+	<div class="mdc-data-table">
+		<div class="mdc-data-table__table-container">
+			<table class="mdc-data-table__table" aria-label="Dessert calories">
+				<thead>
+					<tr class="mdc-data-table__header-row">
+						<th class="mdc-data-table__header-cell" role="columnheader" scope="col">ID</th>
+						<th class="mdc-data-table__header-cell" role="columnheader" scope="col">Navn</th>
+						<th class="mdc-data-table__header-cell" role="columnheader" scope="col">Alder</th>
+						<th class="mdc-data-table__header-cell" role="columnheader" scope="col">Kjønn</th>
+						<th class="mdc-data-table__header-cell" role="columnheader" scope="col">Celle nummer</th>
+						<th class="mdc-data-table__header-cell" role="columnheader" scope="col">Fengslingsdato fra</th>
+						<th class="mdc-data-table__header-cell" role="columnheader" scope="col">Fengslingsdato til</th>
+						<th class="mdc-data-table__header-cell" role="columnheader" scope="col">Løslat</th>
+					</tr>
+				</thead>
+				<tbody class="mdc-data-table__content">
+					<tr th:each="arrestant: ${arrestanter}" class="mdc-data-table__row">
+						<td class="mdc-data-table__cell" th:text="${arrestant.id}"></td>
+						<td class="mdc-data-table__cell" th:text="${arrestant.navn}"></td>
+						<td class="mdc-data-table__cell" th:text="${arrestant.alder}"></td>
+						<td class="mdc-data-table__cell" th:text="${arrestant.kjonn}"></td>
+						<td>
+							<form action="#" th:action="@{/overfor}" method="get">
+								<input type="hidden" th:name="arrestantId" th:value="${arrestant.id}" /> 
+								<input type="text" th:name="celleNummer" th:value="${arrestant.celleNummer}" onchange="javascript:submit()" />
+							</form>
+						</td>
+						<td class="mdc-data-table__cell" th:text="${arrestant.fengslingsDatoFra}"></td>
+						<td class="mdc-data-table__cell" th:text="${arrestant.fengslingsDatoTil}"></td>
+						<td class="mdc-data-table__cell">
+							<form action="#" th:action="@{/loslat}" method="get">
+								<input type="hidden" th:name="arrestantId" th:value="${arrestant.id}" />
+								<button class="mdc-button" onClick="javascript:submit()">
+									<span class="mdc-button__ripple"></span> <span class="mdc-button__label">Løslat</span>
+								</button>
+							</form>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	
+	<p><p>
+	<h2 class="mdc-typography--headline6">Ny arrestant</h2>
+	<form action="#" th:action="@{/settInn}" th:object="${arrestantUtenId}" method="post">
+		<div class="mdc-data-table">
+			<div class="mdc-data-table__table-container">
+				<table class="mdc-data-table__table" aria-label="Dessert calories">
+					<thead>
+						<tr class="mdc-data-table__header-row">
+							<th class="mdc-data-table__header-cell" role="columnheader" scope="col">Navn</th>
+							<th class="mdc-data-table__header-cell" role="columnheader" scope="col">Alder</th>
+							<th class="mdc-data-table__header-cell" role="columnheader" scope="col">Kjønn</th>
+							<th class="mdc-data-table__header-cell" role="columnheader" scope="col">Celle nummer</th>
+							<th class="mdc-data-table__header-cell" role="columnheader" scope="col">Fengslingsdato fra</th>
+							<th class="mdc-data-table__header-cell" role="columnheader" scope="col">Fengslingsdato til</th>
+						</tr>
+					</thead>
+					<tbody class="mdc-data-table__content">
+						<tr class="mdc-data-table__row">
+							<td>
+							  	<input type="text" th:field="*{navn}" required="required">
+							</td>
+							<td>
+							  	<input type="text" th:field="*{alder}" required="required">
+							</td>
+							<td>
+								<input type="text" th:field="*{kjonn}" required="required">
+							</td>
+							<td>
+								<input type="text" th:field="*{celleNummer}" required="required">
+							</td>
+							<td>
+								<input type="date" th:field="*{fengslingsDatoFra}" required="required">
+							</td>
+							<td>
+								<input type="date" th:field="*{fengslingsDatoTil}" required="required"/>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<p>
+		<input type=submit class="mdc-button mdc-button--outlined" value="Sett inn ny arrestant" />
+	</form>
+		
+</body>
+</html>
